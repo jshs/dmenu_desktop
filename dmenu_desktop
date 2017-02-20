@@ -22,7 +22,17 @@ if [ "$1" = -e ] ; then
     fi
     read -r name || exit 1
     export name
-    match=$(awk -F ';\t' '$1 == ENVIRON["name"] {OFS=FS; print $2, $3; exit}' "$cache")
+    match=$(awk -F ';\t' \
+        'function unescape(str) {
+            gsub(/\\s/, " ", str)
+            gsub(/\\n/, "\n", str)
+            gsub(/\\t/, "\t", str)
+            gsub(/\\r/, "\r", str)
+            gsub(/\\\\/, "\\", str)
+            return str
+        }
+        $1 == ENVIRON["name"] {OFS=FS; print unescape($2), unescape($3); exit}' \
+        "$cache")
     unset name
     [ -n "$match" ] || exit 1
     path=${match%%;	*} # NB: literal tab
@@ -58,20 +68,18 @@ _collect () {
     match($0, /[ \t]*=[ \t]*/)
     kv[substr($0, 1, RSTART-1)] = substr($0, RSTART+RLENGTH)
 }
-function unescape(x) {
-    gsub(/\\[nrst]/, " ", x)
-    gsub(/\\\\/, "\\", x)
-    return x
-}
 END {
+    OFS = ";\t"
     if (kv["Type"] == "Application" && kv["NoDisplay"] != "true") {
-        OFS = ";\t"
-        exec = unescape(kv["Exec"])
+        name = kv["Name"]
+        gsub(/\\[nrst]/, " ", name)
+        gsub(/\\\\/, "\\", name)
+        exec = kv["Exec"]
         gsub(/%[a-zA-Z]/, "", exec)
         gsub(/%%/, "%", exec)
         if (kv["Terminal"] == "true")
             exec = "${DESKTOP_TERMINAL:-false} " exec
-        print unescape(kv["Name"]), unescape(kv["Path"]), exec
+        print name, kv["Path"], exec
     }
 }'
     old_IFS=$IFS
