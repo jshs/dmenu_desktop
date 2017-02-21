@@ -1,0 +1,72 @@
+.TH DMENU_DESKTOP 1 2017-02-21
+.SH NAME
+dmenu_desktop \- list and run desktop applications
+.SH SYNOPSIS
+.B dmenu_desktop
+.RB [ \-e | \-u ]
+.SH DESCRIPTION
+.B dmenu_desktop
+lists desktop applications installed on the system.
+The name of each application is written to standard output, delimited by newlines.
+It is intended to use this command together with a dynamic menu, such as
+.BR dmenu (1).
+The selected application can be run by writing its name on a single line to the standard input of
+.BR "dmenu_desktop\ \-e" .
+.PP
+The available applications are determined by locating and parsing desktop entry files according to the XDG Desktop Menu Specification and the XDG Desktop Entry Specification.
+.PP
+The list of applications and their commands are cached.
+The cache is updated automatically only when one of the base directories that is searched for desktop entries was modified.
+The entry files themselves or any subdirectories are not tested for modification.
+Use the
+.B \-u
+option to force an update of the cache.
+.SH OPTIONS
+.TP
+.B \-e
+Read the name of an application from standard input and execute the corresponding command.
+The application list is not printed.
+The name must exactly match a line that was output by the preceding invocation of
+.B dmenu_desktop
+without the
+.B \-e
+option.
+The cache file (see
+.I Files
+below) must exist before invoking the command, and it is never updated.
+.TP
+.B \-u
+Update the application cache, then exit.
+.SH EXIT STATUS
+The exit status is nonzero if an error occurred, and 0 otherwise.
+If an application was started with the
+.B \-e
+option, its exit status is returned.
+.SH ENVIRONMENT
+.TP
+.B RUN_TERMINAL_APP
+Prefix to be added to the command string of terminal applications.
+Set this variable to start terminal applications in a terminal emulator.
+If the variable is null or unset, attempting to run a terminal application will fail.
+.SH FILES
+.TP
+.I $XDG_CACHE_HOME/dmenu_desktop
+Cached list of all applications.
+If
+.B XDG_CACHE_HOME
+is null or unset, use
+.I $HOME/.cache
+instead.
+If the directory does not exist, the cache file is located at
+.I $HOME/.dmenu_desktop
+.SH EXAMPLE
+The canonical invocation to select and run an application interactively is
+.PP
+.nf
+.RS
+dmenu_desktop | dmenu \-i | dmenu_desktop \-e
+.RE
+.fi
+.SH SEE ALSO
+.BR dmenu (1),
+.BR dmenu_run (1)
