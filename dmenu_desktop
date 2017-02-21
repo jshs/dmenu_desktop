@@ -78,7 +78,7 @@ END {
         gsub(/%[a-zA-Z]/, "", exec)
         gsub(/%%/, "%", exec)
         if (kv["Terminal"] == "true")
-            exec = "${DESKTOP_TERMINAL:-false} " exec
+            exec = "${RUN_TERMINAL_APP:-false} " exec
         print name, kv["Path"], exec
     }
 }'
