@@ -1,7 +1,7 @@
-`dmenu_desktop`
-===============
+dmenu_desktop
+=============
 
-`dmenu_desktop` lists desktop applications installed on the system, following
+dmenu_desktop lists desktop applications installed on the system, following
 a small subset of the [XDG Desktop Menu Specification][xdg-spec]. It is
 intended to use this command together with a dynamic menu, such as [dmenu][].
 The selected application can be run by writing its name to the standard input
@@ -10,7 +10,7 @@ of `dmenu_desktop -e`.
 Installation
 ------------
 
-`dmenu_desktop` is just a (hopefully portable) shell script, so nothing has to
+dmenu_desktop is just a (hopefully portable) shell script, so nothing has to
 be compiled. To install it on the system, run
 
     # make install
